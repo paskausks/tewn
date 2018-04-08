@@ -53,6 +53,7 @@ class MicrophoneInput(object):
     ) -> tuple:
         """
         Callback for the stream listener.
+
         :param in_data: recorded data
         :param frame_count: number of frames read
         :param time_info:  dictionary with the following keys:
@@ -68,22 +69,35 @@ class MicrophoneInput(object):
     @property
     def device_name(self) -> str:
         """
-        :return: Name of default device
+        Get default device name.
+
+        :return: Name
         """
         return self._dev['name']
 
     @property
     def sample_rate(self) -> int:
+        """
+        Get configured sample rate.
+
+        :return: Sample rate
+        """
         return int(self._dev['defaultSampleRate'])
 
     @property
     def sample_size(self) -> int:
+        """
+        Get size of a single audio sample.
+
+        :return: Size in bytes
+        """
         return pyaudio.get_sample_size(self._sample_fmt)
 
     @property
     def _frames(self) -> Generator[int, Any, None]:
         """
         Split and unpack the received data into sample frames
+
         :return: iterator of audio sample frames as integers
         """
         sample_size = self.sample_size
@@ -96,6 +110,7 @@ class MicrophoneInput(object):
     def frames(self) -> list:
         """
         Return audio frames and clear buffer
+
         :return: recorded frames as unpacked integers
         """
         rv = list(self._frames)
@@ -106,12 +121,16 @@ class MicrophoneInput(object):
     def _unpack_frame(frame: bytes) -> int:
         """
         Convert an audio frame to an 32 bit integer
-        :param frame:
-        :return: Audio frame
+
+        :param frame: Audio frame
+        :return: Unpacked audio frame
         """
         return struct.unpack('i', frame)[0]
 
     def quit(self):
+        """
+        Close stream and terminate connection to audio input.
+        """
         self._stream.stop_stream()
         self._stream.close()
         self._sys.terminate()
