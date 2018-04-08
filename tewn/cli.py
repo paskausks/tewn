@@ -11,6 +11,7 @@ def main(args=None):
         mic = audio.MicrophoneInput()
     except audio.MicrophoneInputException as e:
         click.echo(str(e), err=True)
+        exit(1)
 
     click.secho(
         'Input initialized. Ready to listen on %s.' % mic.device_name,
